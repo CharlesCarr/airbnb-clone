@@ -4,7 +4,6 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import ImageCarousel from "./ImageCarousel";
 
 function StayGridItem({ listing }: any) {
-  console.log("testing", listing);
   return (
     <div className="w-1/5 text-black h-full text-xs">
 
