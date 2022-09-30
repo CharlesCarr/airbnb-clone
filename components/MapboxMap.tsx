@@ -1,93 +1,73 @@
-import Map from "react-map-gl";
-import Marker from "react-map-gl";
-import Popup from "react-map-gl";
-import { useEffect, useState } from "react";
-import {
-  collection,
-  getDocs,
-  QueryDocumentSnapshot,
-  DocumentData,
-} from "firebase/firestore";
-import { db } from "../utilities/firebase";
+import Map, { Marker, Popup } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { useContext, useEffect, useState } from "react";
 import getCenter from "geolib/es/getCenter";
+import { FirebaseContext } from "../context/FirebaseContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapPin } from "@fortawesome/free-solid-svg-icons";
 
 function MapboxMap() {
+  const [selectedLocation, setSelectedLocation] = useState<any>({});
+  console.log(selectedLocation);
+
   // center of map - (initializing to NYC for testing purposes)
   const [center, setCenter] = useState<any>({
     latitude: 40.7128,
     longitude: -74.006,
   });
   // get array of objects from Firestore
-  const [allListings, setAllListings] = useState<any>([]);
-  console.log(allListings);
+  const listings = useContext(FirebaseContext);
+
+  const longLatArr = listings.map((listing: any) => {
+    return {
+      latitude: listing.latitude,
+      longitude: listing.longitude,
+    };
+  });
 
   useEffect(() => {
-    getListings();
-
-    if (allListings.length > 0) {
-      const longLatArr = allListings.map((listing: any) => {
-        return {
-          latitude: listing.latitude,
-          longitude: listing.longitude,
-        };
-      });
-      console.log(longLatArr);
-      // find center of all location coordinates
-      const center = getCenter(longLatArr);
-      console.log(center);
-      setCenter(center);
-    }
+    // find center of all location coordinates
+    setCenter(getCenter(longLatArr));
   }, []);
 
-  const getListings = async () => {
-    const querySnapshot = await getDocs(collection(db, "listings"));
-
-    const result: QueryDocumentSnapshot<DocumentData>[] = [];
-    querySnapshot.forEach((snap: any) => {
-      // console.log(`${doc.id} => ${doc.data().img}`);
-      result.push(snap.data());
-    });
-
-    setAllListings(result);
-  };
-
-  // transform into a new array of objs
-  /*
-
-
-  Example HERE: 
-
-    newObj = [
-      { latitude: 52.516272, longitude: 13.377722 },
-      { latitude: 51.515, longitude: 7.453619 },
-      { latitude: 51.503333, longitude: -0.119722 },
-    ];
-
-  */
-
-  return allListings.length > 0 ? (
+  return listings.length > 0 ? (
     <section className="cursor-pointer w-screen h-full">
       <Map
         initialViewState={{
           ...center,
-          zoom: 5,
+          zoom: 3.5,
         }}
-        style={{ width: "100%", height: "100%" }}
+        // style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/charliecarr4/cl8kujpf1001l14qitfyqlv48"
         mapboxAccessToken={process.env.mapbox_key}
       >
-        {allListings.map((result: any) => {
+        {listings.map((result: any) => {
           return (
-            <div key={result.id}>
+            <>
               <Marker
-              longitude={result.longitude}
-              latitude={result.latitude}
-              // offsetLeft={-20}
-              // offsetRight={-10}
+                key={result.id}
+                longitude={result.longitude}
+                latitude={result.latitude}
               >
-                <p>XX</p>
+                <FontAwesomeIcon
+                  icon={faMapPin}
+                  className="w-5 h-5 text-red-600 cursor-pointer text-2xl animate-bounce"
+                  onClick={() => setSelectedLocation(result)}
+                />
               </Marker>
-            </div>
+              {selectedLocation.longitude === result.longitude ? (
+                <Popup
+                  onClose={() => setSelectedLocation({})}
+                  closeOnClick={false}
+                  latitude={result.latitude}
+                  longitude={result.longitude}
+                >
+                  {result.location}
+                </Popup>
+              ) : (
+                false
+              )}
+            </>
           );
         })}
       </Map>

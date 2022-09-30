@@ -9,7 +9,7 @@ import ShowMap from "../components/ShowMap";
 import MapboxMap from "../components/MapboxMap";
 
 const Home: NextPage = () => {
-  const [ showMap, setShowMap ] = useState<boolean>(false);
+  const [showMap, setShowMap] = useState<boolean>(false);
 
   return (
     <div className="h-screen">
@@ -22,8 +22,8 @@ const Home: NextPage = () => {
 
       <div className="px-24 h-screen">
         <TopFilter />
-        {showMap ? (<MapboxMap />) : (<StayGrid />)}
-        <ShowMap showMap={showMap} setShowMap={setShowMap}/>
+        {showMap ? <MapboxMap /> : <StayGrid />}
+        <ShowMap showMap={showMap} setShowMap={setShowMap} />
       </div>
 
       <Footer />
