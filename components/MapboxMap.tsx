@@ -1,12 +1,11 @@
 import Map, { Marker, Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import getCenter from "geolib/es/getCenter";
-import { FirebaseContext } from "../context/FirebaseContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons";
 
-function MapboxMap() {
+function MapboxMap({ activeListings }: any) {
   const [selectedLocation, setSelectedLocation] = useState<any>({});
   console.log(selectedLocation);
 
@@ -16,9 +15,9 @@ function MapboxMap() {
     longitude: -74.006,
   });
   // get array of objects from Firestore
-  const listings = useContext(FirebaseContext);
+  // const listings = useContext(FirebaseContext);
 
-  const longLatArr = listings.map((listing: any) => {
+  const longLatArr = activeListings.map((listing: any) => {
     return {
       latitude: listing.latitude,
       longitude: listing.longitude,
@@ -30,7 +29,7 @@ function MapboxMap() {
     setCenter(getCenter(longLatArr));
   }, []);
 
-  return listings.length > 0 ? (
+  return activeListings.length > 0 ? (
     <section className="cursor-pointer w-screen h-full">
       <Map
         initialViewState={{
@@ -41,7 +40,7 @@ function MapboxMap() {
         mapStyle="mapbox://styles/charliecarr4/cl8kujpf1001l14qitfyqlv48"
         mapboxAccessToken={process.env.mapbox_key}
       >
-        {listings.map((result: any) => {
+        {activeListings.map((result: any) => {
           return (
             <>
               <Marker

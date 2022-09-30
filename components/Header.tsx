@@ -8,7 +8,7 @@ import { GlobeAltIcon } from "@heroicons/react/24/outline";
 
 function Header() {
   return (
-    <header className="sticky top-0 z-50 grid grid-cols-3 bg-white shadow-md p-5 md:px-10">
+    <header className="sticky top-0 z-50 grid grid-cols-3 bg-white shadow-md p-5 md:px-10 h-20">
       <div className="relative flex items-center h-10 cursor-pointer my-auto">
         <Image src="https://firebasestorage.googleapis.com/v0/b/airbnb-clone-7c0b2.appspot.com/o/airbnb_logo.png?alt=media&token=52074dd8-0f78-4642-a31d-aaab73aa6edc" height="100px" width="150px"/>
       </div>

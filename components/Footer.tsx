@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <div className="fixed flex bottom-3 w-full items-end border-t-2 px-24 pt-2 text-xs">
+    <div className="fixed flex bottom-0 pb-3 w-full items-end border-t-2 px-24 pt-2 text-xs z-50 bg-white">
       <div className="flex w-2/4 space-x-4">
         <p>2022 Airbnb, Inc. CLONE</p>
         <p>Privacy</p>
