@@ -7,14 +7,31 @@ import StayGrid from "../components/StayGrid";
 import Footer from "../components/Footer";
 import ShowMap from "../components/ShowMap";
 import MapboxMap from "../components/MapboxMap";
-import { useContext } from "react";
-import { FirebaseContext } from "../context/FirebaseContext";
+// import { useContext } from "react";
+// import { FirebaseContext } from "../context/FirebaseContext";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../utilities/firebase";
+import { getListing } from "../utilities/getListing";
 
-const Home: NextPage = () => {
+export const getStaticProps = async () => {
+  // fetch the data from Firebase here instead of using React Context
+  const querySnapshot = await getDocs(collection(db, "listings"));
+
+  const result: any = [];
+  querySnapshot.forEach((snap) => {
+    result.push(snap.data());
+  });
+
+  return {
+    props: { allListings: result },
+  };
+};
+
+const Home: NextPage = ({ allListings }: any) => {
   const [showMap, setShowMap] = useState<boolean>(false);
   const [filterSet, setFilterSet] = useState<string>("");
   const [activeListings, setActiveListings] = useState<any>([]);
-  const allListings = useContext(FirebaseContext);
+  // const allListings = useContext(FirebaseContext);
   const filteredListings = allListings.filter(
     (list: any) => list.category.toLowerCase() === filterSet.toLowerCase()
   );
@@ -26,6 +43,10 @@ const Home: NextPage = () => {
       setActiveListings(allListings);
     }
   }, [filterSet, allListings]);
+
+  // useEffect(() => {
+  //   getListing();
+  // }, []);
 
   return (
     <div className="h-screen">
@@ -41,9 +62,7 @@ const Home: NextPage = () => {
         {showMap ? (
           <MapboxMap activeListings={activeListings} />
         ) : (
-          <StayGrid
-          activeListings={activeListings}
-          />
+          <StayGrid activeListings={activeListings} />
         )}
         <ShowMap showMap={showMap} setShowMap={setShowMap} />
       </div>
